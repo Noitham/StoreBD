@@ -2,13 +2,10 @@ package cat.proven.storeapp.model;
 
 import cat.proven.storeapp.Storeapp;
 import java.util.Objects;
-import java.util.Properties;
 
 public class Product {
 
     Storeapp myStoreapp = new Storeapp();
-
-    Properties mssgProps = myStoreapp.initConfig();
 
     //attributes
     private long id;
@@ -134,29 +131,16 @@ public class Product {
     public String toString() {
         //return "Product{" + "code=" + code + ", name=" + name + ", price=" + price + '}';
         StringBuilder sb = new StringBuilder();
-        sb.append(mssgProps.getProperty("product") + "{");
-        sb.append(mssgProps.getProperty("id") + "=");
+        sb.append("product" + "{");
+        sb.append("id" + "=");
         sb.append(id);
-        sb.append(mssgProps.getProperty("code") + "=");
+        sb.append(", " + "code" + "=");
         sb.append(code);
-        sb.append(", " + mssgProps.getProperty("name") + "=");
+        sb.append(", " + "name" + "=");
         sb.append(name);
-        sb.append(", " + mssgProps.getProperty("price") + "=");
+        sb.append(", " + "price" + "=");
         sb.append(price);
-
-        return sb.toString();
-    }
-
-    public String toCsv() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("PR;");
-        sb.append(id);
-        sb.append(";");
-        sb.append(code);
-        sb.append(";");
-        sb.append(name);
-        sb.append(";");
-        sb.append(price);
+        sb.append("}");
 
         return sb.toString();
     }

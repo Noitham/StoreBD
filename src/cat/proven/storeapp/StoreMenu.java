@@ -5,8 +5,6 @@
  */
 package cat.proven.storeapp;
 
-import java.util.Properties;
-
 /**
  *
  * @author dmora
@@ -15,22 +13,18 @@ public class StoreMenu extends Menu {
 
     Storeapp myStoreapp = new Storeapp();
 
-    Properties mssgProps = myStoreapp.initConfig();
-
     public StoreMenu(String title) {
         super(title);
 
-        add(new Option(mssgProps.getProperty("exit")));
-        add(new Option(mssgProps.getProperty("listallproducts")));
-        add(new Option(mssgProps.getProperty("findproductbycode")));
-        add(new Option(mssgProps.getProperty("findproductbyprice")));
-        add(new Option(mssgProps.getProperty("addnewproduct")));
-        add(new Option(mssgProps.getProperty("modifyproduct")));
-        add(new Option(mssgProps.getProperty("deleteproduct")));
-        add(new Option(mssgProps.getProperty("loadfrombin")));
-        add(new Option(mssgProps.getProperty("savetobin")));
-        add(new Option(mssgProps.getProperty("loadfromcsv")));
-        add(new Option(mssgProps.getProperty("savetocsv")));
+        add(new Option("Exit"));
+        add(new Option("List all products"));
+        add(new Option("Find product by ID"));
+        add(new Option("Find product by code"));
+        add(new Option("Find product by name"));
+        add(new Option("Find product by price"));
+        add(new Option("Add new product"));
+        add(new Option("Modify product"));
+        add(new Option("Delete product"));
         System.out.println("");
     }
 

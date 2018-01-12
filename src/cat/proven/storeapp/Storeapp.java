@@ -1,15 +1,9 @@
 package cat.proven.storeapp;
 
-import cat.proven.storeapp.model.Fridge;
+
 import cat.proven.storeapp.model.Product;
-import cat.proven.storeapp.model.Tv;
-import cat.proven.storeapp.model.Microwave;
 import cat.proven.storeapp.model.Store;
-import cat.proven.storeapp.model.persist.StoreFilePersistBinary;
-import cat.proven.storeapp.model.persist.StoreFilePersistCsv;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -20,13 +14,13 @@ import java.util.*;
 public class Storeapp {
 
     //Application data: list of prducts
-    private Store myStore = new Store();
+    private final Store myStore = new Store();
     
     
     public static void main(String[] args) throws FileNotFoundException {
         Storeapp storeApp = new Storeapp();
         storeApp.run();
-
+        
     }
 
     public void run() throws FileNotFoundException {
@@ -46,34 +40,28 @@ public class Storeapp {
                     exit = true;
                     break;
                 case 1: //List all Products
-                    
+                    listAllProducts();
                     break;
-                case 2: //Search by code
+                case 2: //Search by id
                     searchProductById();
                     break;
-                case 3: //Search by price
+                case 3: //Search by code
+                    searchByCode();
+                    break;
+                case 4: //Search by name
+                    searchProductByName();
+                    break;
+                case 5: //Search by price
                     searchProductByPrice();
                     break;
-                case 4: //Add new product
+                case 6: //Add new product
                     addNewProduct();
                     break;
-                case 5: //Modify a product
+                case 7: //Modify a product
                     modifyProduct();
                     break;
-                case 6: //Delete a product
+                case 8: //Delete a product
                     deleteProduct();
-                    break;
-                case 7: //Load from bin
-                    loadFileBinary();
-                    break;
-                case 8: //Save to bin
-                    saveFileBinary();
-                    break;
-                case 9: //Load from csv
-                    loadFile();
-                    break;
-                case 10: //Save to csv
-                    saveFile();
                     break;
                 default:
                     System.out.println("Wrong option");
@@ -83,15 +71,24 @@ public class Storeapp {
 
     }
 
-
     public Storeapp() {
 
     }
     
+    /**
+     * Lists all products from database
+     */
+    private void listAllProducts(){
+        
+        List<Product> product = myStore.findAllProducts();
 
-    //TODO
-    private void searchByCode() {
-        System.out.println("Searching by code");
+        if (product != null) {
+        //Print result
+        System.out.println(product.toString());
+        } else {//Product is null
+        System.out.println("No products found");
+        }
+        
     }
     
 
@@ -102,9 +99,34 @@ public class Storeapp {
      * found, it will be shown to user If not, it reports that the product is
      * not in the store.
      */
+    private void searchByCode() {
+        //Ask the code
+        String scode = input("Input code: ");
+        try{
+            //search the product
+            Product product = myStore.findByCode(scode);
+            if (product != null) {
+                //Print result
+                System.out.println(product.toString());
+            } else {//Product is null
+                System.out.println("Product not found");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Errror reading code");
+        }
+    }
+    
+
+    /**
+     * Asks the user the id of the product to search. If the id has been
+     * succesfully read, it searches a prodcut with the given id in the store.
+     * If not. It reports it to the user If a product with the given id is
+     * found, it will be shown to user If not, it reports that the product is
+     * not in the store.
+     */
     private void searchProductById() {
         //Ask the code
-        String sid = input("Input Id");
+        String sid = input("Input Id: ");
         try{
             long id = Long.parseLong(sid);
             //search the product
@@ -119,6 +141,33 @@ public class Storeapp {
             System.out.println("Errror reading code");
         }
     }
+    
+    /**
+     * Asks the user the name to search. If the name has been succesfully
+     * read, it searches a prodcut with the given name in the store. If not. It
+     * reports it to the user If a product with the given name is found, it
+     * will be shown to user If not, it reports that the are no products with
+     * the given name in the store.
+     */
+    private void searchProductByName() {
+        //Ask the name
+        String name = input("Input name: ");
+        try{
+            //search product with the given price
+            List<Product> product = myStore.findByName(name);
+
+            if (product != null) {
+            //Print result
+            System.out.println(product.toString());
+            
+            } else {//Product is null
+                System.out.println("Product not found");
+            }
+                
+        } catch (NumberFormatException e) {
+            System.out.println("Error reading name");
+        }
+    }
 
     /**
      * Asks the user the price to search. If the price has been succesfully
@@ -129,7 +178,7 @@ public class Storeapp {
      */
     private void searchProductByPrice() {
         //Ask the price
-        String sprice = input("Input price");
+        String sprice = input("Input price: ");
         try{
                 double price = Double.parseDouble(sprice);
 
@@ -156,7 +205,7 @@ public class Storeapp {
      */
     private String input(String message) {
         System.out.print(message);
-        Scanner scan = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in).useDelimiter("\n");
         String answer = scan.next();
         return answer;
     }
@@ -169,41 +218,18 @@ public class Storeapp {
      */
     private void addNewProduct() {
         //Ask the user to input data for the new product.
-        Scanner scan = new Scanner(System.in);
         Product product;
-        //System.out.println("Select your option: 1-TV. 2-Fridge. 3-Microwave. 4-Other.");
-        System.out.println("Select option" + "1-" + "Tv" + ". " + "2-" + "Fridge" + ". " + "3-" + "Micro" + ". " + "4-" + "Other" + ". ");
-
-        int option = scan.nextInt();
-        switch (option) {
-            case 1:
-                product = productFormTV();
-                myStore.addProduct(product);
-                break;
-            case 2:
-                product = productFormFridge();
-                myStore.addProduct(product);
-                break;
-            case 3:
-                product = productFormMicrowave();
-                myStore.addProduct(product);
-                break;
-            case 4:
-                product = productForm();
-                myStore.addProduct(product);
-                break;
-            default:
-                product = null;
-                break;
-        }
+        
+        product = productForm();
+        
         if (product == null) {
-            System.out.println("Error reading product");
+            System.out.println("Error adding product");
 
         } else {
             //Add the product to the store
-            int b = myStore.addProduct(product);
+        int b = myStore.addProduct(product);
             //report result to user
-            if (b == 0) {
+            if (b == 1) {
                 System.out.println("Product succesfully added");
             } else {
                 System.out.println("Error adding product");
@@ -220,60 +246,29 @@ public class Storeapp {
      *
      */
     private Product productForm() {
+        
         Scanner scan = new Scanner(System.in);
         Product product = new Product();
 
         System.out.println("Enter code");
         product.setCode(scan.next());
-        if (myStore.find(product) == null) {
+        //We check if product with same code is already in our database, in case it's not, we add it
+        //In case code already exists, we tell the user.
+        if (myStore.findByCode(product.getCode()) == null) {
             System.out.println("Enter name");
             product.setName(scan.next());
             System.out.println("Enter price");
             product.setPrice(scan.nextDouble());
         } else {
-            System.out.println(mssgProps.getProperty("codealreadyexists"));
+            System.out.println("Code already exists");
             product = null;
         }
         
         return product;
+        
     }
-
-    private Product productFormTV() {
-
-        Product product = this.productForm();
-        Scanner scan = new Scanner(System.in);
-
-        System.out.println(mssgProps.getProperty("inputinches"));
-        Tv tvf = new Tv(product, scan.nextInt());
-
-        return tvf;
-
-    }
-
-    private Product productFormFridge() {
-
-        Product product = this.productForm();
-        Scanner scan = new Scanner(System.in);
-
-        System.out.println(mssgProps.getProperty("inputcapacity"));
-        Fridge fridgef = new Fridge(product, scan.nextInt());
-
-        return fridgef;
-
-    }
-
-    private Product productFormMicrowave() {
-
-        Product product = this.productForm();
-        Scanner scan = new Scanner(System.in);
-
-        System.out.println(mssgProps.getProperty("inputpower"));
-        Microwave mwf = new Microwave(product, scan.nextInt());
-
-        return mwf;
-
-    }
-
+    
+    
     /**
      * Asks the user the code of the product to delete In case of error reading
      * the code, it reports the error to the user. If not, it searches the
@@ -283,36 +278,45 @@ public class Storeapp {
      * store. Otherwise, it reports it to the user.
      */
     private void deleteProduct() {
+        
         //Ask the code
-        String code = input(mssgProps.getProperty("entercode"));
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Enter code");
+        
+        String code = scan.next();
+        
         if (code != null) {
             //Search the product
             Product p = new Product(code);
-            Product product = myStore.find(p);
+            Product product = myStore.findByCode(code);
             if (product != null) {
                 System.out.println(product.toString());
                 //Asks for confirmation
-                String answer = input(mssgProps.getProperty("confirmdeleteproduct") + "?" + "(Y/N)");
+                String answer = input("Confirm delete product" + "?" + "(Y/N)");
                 if (answer.equals("Y")) {
+                    
                     //Delete product
-                    boolean b;
-                    if (b = true) {
-                        b = myStore.remove(product);
-                        System.out.println(mssgProps.getProperty("productdeleted"));
+                    int b = myStore.removeProduct(product);
+                    
+                    if (b == 1) {
+                        
+                        System.out.println("Product succesfully deleted");
                     } else {
-                        System.out.println(mssgProps.getProperty("productnotdeleted"));
+                        System.out.println("Product not deleted");
                     }
 
                 } else {
-                    System.out.println(mssgProps.getProperty("abortedperuser"));
+                    System.out.println("Aborted per user");
                 }
 
             } else {//Product is null
-                System.out.println(mssgProps.getProperty("productnotfound"));
+                System.out.println("Product not found");
             }
         } else {
-            System.out.println(mssgProps.getProperty("errorreadingcode"));
+            System.out.println("Error reading code");
         }
+        
+        
     }
 
     
@@ -324,8 +328,12 @@ public class Storeapp {
      * the product and reports the data to the user.
      */
     private void modifyProduct() {
-
-        String codeSearch = input(mssgProps.getProperty("entercode"));
+        
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Enter code");
+        
+        String codeSearch = scan.next();
+        
         String code;
         String name;
         int comprobacion = 0;
@@ -333,27 +341,29 @@ public class Storeapp {
 
         if (codeSearch != null) {
             //Search the product
-            Product p = new Product(codeSearch);
-            Product product = myStore.find(p);
+            Product product = myStore.findByCode(codeSearch);
 
             if (product != null) {
                 System.out.println(product.toString());
-                code = input(mssgProps.getProperty("entercode"));
-                name = input(mssgProps.getProperty("entername"));
-
+                System.out.println("Enter new code");
+                code = scan.next();
+                System.out.println("Enter new name");
+                name = scan.next();
                 try {
                     do {
-
-                        price = Double.parseDouble(input(mssgProps.getProperty("enterprice")));
+                        
+                        System.out.println("Enter new price");
+                        price = Double.parseDouble(scan.next());
+                        
                         if (price < 0) {
-                            System.out.println(mssgProps.getProperty("pricelower0"));
+                            System.out.println("Price entered is lower than 0");
 
                         }
                     } while (price < 0);
 
-                    for (int i = 0; i < myStore.getNumProducts(); i++) {
+                    for (int i = 0; i < myStore.findAllProducts().size(); i++) {
 
-                        if (code.equals(myStore.get(i).getCode())) {
+                        if (code.equals(myStore.findByCode(code))) {
                             comprobacion = 1;
 
                         } else {
@@ -362,67 +372,30 @@ public class Storeapp {
                     }
 
                     if (comprobacion == 0) {
-                        myStore.modify(product, code, name, price);
-                        System.out.println(mssgProps.getProperty("codemodified"));
+                        product.setCode(code);
+                        product.setName(name);
+                        product.setPrice(price);
+                        System.out.println("Product modified");
+                        //p = new Product(id, code, name, price);
+                        myStore.modifyProduct(product);
+                        
                     } else {
 
-                        System.out.println(mssgProps.getProperty("coderepeated"));
+                        System.out.println("Code repeated");
                     }
                 } catch (NumberFormatException e) {
 
-                    System.out.println(mssgProps.getProperty("wrongdata"));
+                    System.out.println("Wrong data");
                     product = null;
                 }
 
             } else {//Product is null
-                System.out.println(mssgProps.getProperty("productnotfound"));
+                System.out.println("Product not found");
             }
         } else {
-            System.out.println(mssgProps.getProperty("errorreadingcode"));
-        }
-    }
-
-    private void saveFile() {
-        StoreFilePersistCsv spc = new StoreFilePersistCsv(PATH);
-        int b = spc.save(myStore);
-        if (b == 1) {
-            System.out.println("Saved!");
-        } else {
-            System.out.println("Not Saved!");
-        }
-    }
-
-    public void loadFile() {
-        StoreFilePersistCsv spc = new StoreFilePersistCsv(PATH);
-        myStore = spc.load();
-        if (myStore != null) {
-            System.out.println("File loaded");
-        } else {
-            System.out.println("File not loaded");
+            System.out.println("Error reading code");
         }
 
     }
     
-    private void saveFileBinary() {
-        StoreFilePersistBinary spc = new StoreFilePersistBinary(PATH2);
-        int b = spc.save(myStore);
-        if (b == 1) {
-            System.out.println("Saved!");
-        } else {
-            System.out.println("Not Saved!");
-        }
-    }
-        
-    public void loadFileBinary() {
-
-        StoreFilePersistBinary spc = new StoreFilePersistBinary(PATH2);
-        myStore = spc.load();
-        if (myStore != null) {
-            System.out.println("File loaded");
-        } else {
-            System.out.println("File not loaded");
-        }
-
-    }
-
 }

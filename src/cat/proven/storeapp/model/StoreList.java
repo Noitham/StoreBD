@@ -2,7 +2,6 @@ package cat.proven.storeapp.model;
 
 import cat.proven.storeapp.Storeapp;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.Scanner;
 
 public class StoreList {
@@ -12,7 +11,7 @@ public class StoreList {
     //costructor
    public StoreList() {
 
-        this.products = new ArrayList<Product>();
+        this.products = new ArrayList<>();
     }
 
     //accesors
@@ -131,54 +130,25 @@ public class StoreList {
 
         return products.indexOf(product);
     }
-
+    
+    
+    /**
+     * Modifies a product of the store. 
+     *
+     * @param product to modify.
+     * @param code new product code
+     * @param name new product name
+     * @param price new product price
+     */
     public void modify(Product product, String code, String name, double price) {
 
-        Storeapp myStoreapp = new Storeapp();
-
-        Properties mssgProps = myStoreapp.initConfig();
-
-        Scanner scan = new Scanner(System.in);
-
-        int index = indexOf(product);
-
-        if (product.getClass().getSimpleName().equals("Tv")) {
-
-            Tv tv = (Tv) product;
-
+        if (product != null) {
             product.setCode(code);
             product.setName(name);
             product.setPrice(price);
-            System.out.println(mssgProps.getProperty("inputinches"));
-            tv.setInches(scan.nextInt());
-
-        } else if (product.getClass().getSimpleName().equals("Fridge")) {
-
-            Fridge f = (Fridge) product;
-
-            product.setCode(code);
-            product.setName(name);
-            product.setPrice(price);
-            System.out.println(mssgProps.getProperty("inputcapacity"));
-            f.setCapacity(scan.nextInt());
-
-        } else if (product.getClass().getSimpleName().equals("Microwave")) {
-
-            Microwave mr = (Microwave) product;
-
-            product.setCode(code);
-            product.setName(name);
-            product.setPrice(price);
-            System.out.println(mssgProps.getProperty("inputpower"));
-            mr.setPower(scan.nextInt());
-        } else {
-
-            if (product != null) {
-                product.setCode(code);
-                product.setName(name);
-                product.setPrice(price);
-            }
-
         }
+
     }
+    
+    
 }

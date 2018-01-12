@@ -24,6 +24,18 @@ public class Store {
     
     
     /**
+     * Search all the products in the database
+     * @return the list of products
+     */
+    public List<Product> findAllProducts()
+    {
+        List<Product> p = productDao.listAll();
+        
+        return p;
+    }
+    
+    
+    /**
      * Search a product in the database with the given id
      * @param id to search
      * @return the product retrieved or null if not found in case of error.
@@ -35,39 +47,82 @@ public class Store {
         return p;
     }
     
+    
+    /**
+     * Search a product in the database with the given code
+     * @param code to search
+     * @return the product retrieved or null if not found in case of error.
+     */
     public Product findByCode(String code)
     {
-        return null;
+        Product p = productDao.findByCode(code);
+        
+        return p;
     }
     
-    public List<Product> findAllProducts()
-    {
-        return null;
-    }
     
+    /**
+     * Search a product in the database with the given name
+     * @param name to search
+     * @return the product retrieved or null if not found in case of error.
+     */
     public List<Product> findByName(String name)
     {
-        return null;
+        List<Product> p = productDao.findByName(name);
+        
+        return p;
     }
     
+    
+    /**
+     * Search a product in the database with the given price
+     * @param price to search
+     * @return the product retrieved or null if not found in case of error.
+     */
     public List<Product> findByPrice (double price)
     {
-        return null;
+        List<Product> p = productDao.findByPrice(price);
+        
+        return p;
     }
     
+    
+    /**
+     * Adds product in the database
+     * @param product to add
+     * @return the product added
+     */
     public int addProduct(Product product)
     {
-        return 0;
+        int p = productDao.insert(product);
+        
+        return p;
     }
     
+    
+    /**
+     * Modifies product in the database
+     * @param product to add
+     * @return the product modified
+     */
     public int modifyProduct(Product product)
     {
-        return 0;
+        int p = productDao.update(product);
+        
+        return p;
     }
     
+    
+    /**
+     * Deletes a product from the database
+     * @param product to add
+     * @return the product deleted
+     */
     public int removeProduct(Product product)
     {
-        return 0;
+        int p = productDao.delete(product);
+        
+        return p;
     }
     
 }
